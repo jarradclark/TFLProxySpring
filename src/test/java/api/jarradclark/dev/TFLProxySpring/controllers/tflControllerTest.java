@@ -1,0 +1,64 @@
+package api.jarradclark.dev.TFLProxySpring.controllers;
+
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import api.jarradclark.dev.TFLProxySpring.services.TFLService;
+import api.jarradclark.dev.TFLProxySpring.services.model.Arrival;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(TFLContoller.class)
+class TFLControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private TFLService service;
+
+    @Test
+    @DisplayName("Should Get the results from the Service Layer for the current stop")
+    void listArrivals() throws Exception {
+        List<Arrival> arrivalList = List.of(Arrival.builder().destinationName("Testing").build());
+        when(service.getArrivals()).thenReturn(arrivalList);
+
+        this.mockMvc.perform(get("/allArrivals"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",hasSize(1)))
+                .andExpect(jsonPath("$.[0].destinationName").value("Testing"));
+    }
+
+    @Test
+    @DisplayName("Should Get the results from the Service Layer for a specific stop")
+    void listArrivalsForStop() throws Exception {
+        List<Arrival> arrivalList = List.of(Arrival.builder().destinationName("Diff Testing").build());
+        when(service.getArrivalsForStop("DiffStopId")).thenReturn(arrivalList);
+
+        this.mockMvc.perform(get("/arrivals/DiffStopId"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",hasSize(1)))
+                .andExpect(jsonPath("$.[0].destinationName").value("Diff Testing"));
+    }
+
+    @Test
+    void changeStop() throws Exception{
+        this.mockMvc.perform(post("/changeCurrentStop/NewStopId"))
+                .andExpect(status().isAccepted())
+                .andExpect(content().string("Stop Changed to NewStopId"));
+        verify(service, atLeast(1)).setCurrentStop("NewStopId");
+    }
+
+}
