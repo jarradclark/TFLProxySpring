@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import api.jarradclark.dev.TFLProxySpring.services.TFLService;
 import api.jarradclark.dev.TFLProxySpring.services.model.Arrival;
+import api.jarradclark.dev.TFLProxySpring.services.model.ArrivalData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,24 +34,26 @@ class TFLControllerTest {
     @DisplayName("Should Get the results from the Service Layer for the current stop")
     void listArrivals() throws Exception {
         List<Arrival> arrivalList = List.of(Arrival.builder().destinationName("Testing").build());
-        when(service.getArrivals()).thenReturn(arrivalList);
+        ArrivalData arrivalData = ArrivalData.builder().arrivalList(arrivalList).build();
+        when(service.getArrivals()).thenReturn(arrivalData);
 
         this.mockMvc.perform(get("/allArrivals"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$",hasSize(1)))
-                .andExpect(jsonPath("$.[0].destinationName").value("Testing"));
+                .andExpect(jsonPath("$.arrivalList",hasSize(1)))
+                .andExpect(jsonPath("$.arrivalList.[0].destinationName").value("Testing"));
     }
 
     @Test
     @DisplayName("Should Get the results from the Service Layer for a specific stop")
     void listArrivalsForStop() throws Exception {
         List<Arrival> arrivalList = List.of(Arrival.builder().destinationName("Diff Testing").build());
-        when(service.getArrivalsForStop("DiffStopId")).thenReturn(arrivalList);
+        ArrivalData arrivalData = ArrivalData.builder().arrivalList(arrivalList).build();
+        when(service.getArrivalsForStop("DiffStopId")).thenReturn(arrivalData);
 
         this.mockMvc.perform(get("/arrivals/DiffStopId"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$",hasSize(1)))
-                .andExpect(jsonPath("$.[0].destinationName").value("Diff Testing"));
+                .andExpect(jsonPath("$.arrivalList",hasSize(1)))
+                .andExpect(jsonPath("$.arrivalList.[0].destinationName").value("Diff Testing"));
     }
 
     @Test

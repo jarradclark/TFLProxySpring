@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class TFLClientImpl implements TFLClient {
 
-    private static final Logger log = LoggerFactory.getLogger(TFLClientImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TFLClientImpl.class);
     private final RestTemplate restTemplate;
 
     public TFLClientImpl(RestTemplate restTemplate) {
@@ -33,7 +33,7 @@ public class TFLClientImpl implements TFLClient {
                     "https://api.tfl.gov.uk/StopPoint/{stopId}/arrivals", HttpMethod.GET, null, arrivalsList, stopId);
 
             if (!response.getStatusCode().is2xxSuccessful()) {
-                log.debug(response.getBody().toString());
+                logger.error(response.getBody().toString());
                 throw new RestClientException("Non 200 response from API");
             }
 
