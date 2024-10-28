@@ -1,4 +1,4 @@
-package api.jarradclark.dev.TFLProxySpring.config;
+package dev.jarradclark.api.TFLProxySpring.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package api.jarradclark.dev.TFLProxySpring;
+package dev.jarradclark.api.TFLProxySpring;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

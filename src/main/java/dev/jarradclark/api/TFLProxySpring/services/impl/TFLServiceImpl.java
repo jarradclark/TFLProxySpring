@@ -1,15 +1,15 @@
-package api.jarradclark.dev.TFLProxySpring.services.impl;
+package dev.jarradclark.api.TFLProxySpring.services.impl;
 
-import api.jarradclark.dev.TFLProxySpring.services.TFLUtility;
-import api.jarradclark.dev.TFLProxySpring.services.model.Arrival;
-import api.jarradclark.dev.TFLProxySpring.services.model.ArrivalComparator;
-import api.jarradclark.dev.TFLProxySpring.services.model.ArrivalData;
+import dev.jarradclark.api.TFLProxySpring.services.TFLUtility;
+import dev.jarradclark.api.TFLProxySpring.services.model.Arrival;
+import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalComparator;
+import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import api.jarradclark.dev.TFLProxySpring.services.TFLClient;
-import api.jarradclark.dev.TFLProxySpring.services.TFLService;
+import dev.jarradclark.api.TFLProxySpring.services.TFLClient;
+import dev.jarradclark.api.TFLProxySpring.services.TFLService;
 
 import java.util.List;
 

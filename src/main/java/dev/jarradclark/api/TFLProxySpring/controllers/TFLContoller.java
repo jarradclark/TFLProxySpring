@@ -1,7 +1,7 @@
-package api.jarradclark.dev.TFLProxySpring.controllers;
+package dev.jarradclark.api.TFLProxySpring.controllers;
 
-import api.jarradclark.dev.TFLProxySpring.services.TFLService;
-import api.jarradclark.dev.TFLProxySpring.services.model.ArrivalData;
+import dev.jarradclark.api.TFLProxySpring.services.TFLService;
+import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

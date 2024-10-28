@@ -1,4 +1,4 @@
-package api.jarradclark.dev.TFLProxySpring.services.model;
+package dev.jarradclark.api.TFLProxySpring.services.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,10 +1,10 @@
-package api.jarradclark.dev.TFLProxySpring.services.impl;
+package dev.jarradclark.api.TFLProxySpring.services.impl;
 
 
-import api.jarradclark.dev.TFLProxySpring.services.TFLClient;
-import api.jarradclark.dev.TFLProxySpring.services.TFLService;
-import api.jarradclark.dev.TFLProxySpring.services.model.Arrival;
-import api.jarradclark.dev.TFLProxySpring.services.model.ArrivalData;
+import dev.jarradclark.api.TFLProxySpring.services.TFLClient;
+import dev.jarradclark.api.TFLProxySpring.services.TFLService;
+import dev.jarradclark.api.TFLProxySpring.services.model.Arrival;
+import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

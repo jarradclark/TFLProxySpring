@@ -1,4 +1,4 @@
-package api.jarradclark.dev.TFLProxySpring.services.impl;
+package dev.jarradclark.api.TFLProxySpring.services.impl;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

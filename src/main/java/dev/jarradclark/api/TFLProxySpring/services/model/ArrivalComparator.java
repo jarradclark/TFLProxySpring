@@ -1,4 +1,4 @@
-package api.jarradclark.dev.TFLProxySpring.services.model;
+package dev.jarradclark.api.TFLProxySpring.services.model;
 
 public class ArrivalComparator implements java.util.Comparator<Arrival> {
     @Override

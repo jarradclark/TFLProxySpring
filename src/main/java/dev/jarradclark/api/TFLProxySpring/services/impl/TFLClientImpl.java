@@ -1,6 +1,6 @@
-package api.jarradclark.dev.TFLProxySpring.services.impl;
+package dev.jarradclark.api.TFLProxySpring.services.impl;
 
-import api.jarradclark.dev.TFLProxySpring.services.model.Arrival;
+import dev.jarradclark.api.TFLProxySpring.services.model.Arrival;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import api.jarradclark.dev.TFLProxySpring.services.TFLClient;
+import dev.jarradclark.api.TFLProxySpring.services.TFLClient;
 
 import java.util.List;
 
