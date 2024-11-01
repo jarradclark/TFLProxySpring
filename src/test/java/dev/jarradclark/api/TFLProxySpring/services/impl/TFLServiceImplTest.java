@@ -1,7 +1,9 @@
 package dev.jarradclark.api.TFLProxySpring.services.impl;
 
 
+import dev.jarradclark.api.TFLProxySpring.config.MainProperties;
 import dev.jarradclark.api.TFLProxySpring.services.TFLClient;
+import dev.jarradclark.api.TFLProxySpring.services.TFLHelper;
 import dev.jarradclark.api.TFLProxySpring.services.TFLService;
 import dev.jarradclark.api.TFLProxySpring.services.model.Arrival;
 import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
@@ -30,13 +32,19 @@ class TFLServiceImplTest {
     private TFLClient mockTflClient;
 
     @Autowired
-    private  TFLService tflService;
+    public TFLHelper tflHelper;
+
+    @Autowired
+    private TFLService tflService;
+
+    @Autowired
+    private MainProperties properties;
 
     @Test
     void getArrivalsAreSortedByArrivalTime() {
-        when(mockTflClient.getArrivalsForStop(tflService.getCurrentStop())).thenReturn(testArrival);
+        when(mockTflClient.getArrivalsForStop(this.tflService.getCurrentStop())).thenReturn(testArrival);
 
-        List<Arrival> arrivalList = tflService.getArrivals().getArrivalList();
+        List<Arrival> arrivalList = this.tflService.getArrivals().getArrivalList();
         assertEquals(first, arrivalList.getFirst());
         assertEquals(middle, arrivalList.get(1));
         assertEquals(last, arrivalList.getLast());
@@ -44,10 +52,10 @@ class TFLServiceImplTest {
 
     @Test
     void getArrivalsForStop() {
-        TFLService tflService = new TFLServiceImpl(mockTflClient);
+        TFLService tflService = new TFLServiceImpl(this.mockTflClient, properties);
         List<Arrival> testResponse = Collections.singletonList(Arrival.builder().destinationName("New Stop").build());
-        when(mockTflClient.getArrivalsForStop("TestStopID")).thenReturn(testResponse);
-        List<Arrival> arrivals = tflService.getArrivalsForStop("TestStopID").getArrivalList();
+        when(this.mockTflClient.getArrivalsForStop("TestStopID")).thenReturn(testResponse);
+        List<Arrival> arrivals = this.tflService.getArrivalsForStop("TestStopID").getArrivalList();
         assertEquals(testResponse, arrivals);
     }
 
@@ -55,18 +63,16 @@ class TFLServiceImplTest {
     @Test
     void changeCurrentStop() {
         Arrival newArrival = Arrival.builder().lineName("Test123").destinationName("Test123").timeToStation(1).build();
-        when(mockTflClient.getArrivalsForStop("NewStopID")).thenReturn(Collections.singletonList(newArrival));
+        when(this.mockTflClient.getArrivalsForStop("NewStopID")).thenReturn(Collections.singletonList(newArrival));
 
-        TFLService tflService = new TFLServiceImpl(mockTflClient);
-        tflService.setCurrentStop("NewStopID");
-        List<Arrival> arrivals = tflService.getArrivals().getArrivalList();
+        this.tflService.setCurrentStop("NewStopID");
+        List<Arrival> arrivals = this.tflService.getArrivals().getArrivalList();
         assertEquals(newArrival, arrivals.getFirst());
     }
 
     @Test
     void testStationMappingChanges() {
-        TFLService service = new TFLServiceImpl(mockTflClient);
-        ArrivalData arrivalData = service.getArrivalsForStop("TestStop");
+        ArrivalData arrivalData = this.tflService.getArrivalsForStop("TestStop");
         assertEquals("Test Stop Name", arrivalData.getStopName());
     }
 
@@ -74,10 +80,8 @@ class TFLServiceImplTest {
     void testDestinationNameChanges() {
         Arrival newArrival = Arrival.builder().destinationName("Example for Testing").build();
         when(mockTflClient.getArrivalsForStop("DestinationTest")).thenReturn(Collections.singletonList(newArrival));
-
-        TFLService tflService = new TFLServiceImpl(mockTflClient);
-        tflService.setCurrentStop("DestinationTest");
-        List<Arrival> arrivals = tflService.getArrivals().getArrivalList();
+        this.tflService.setCurrentStop("DestinationTest");
+        List<Arrival> arrivals = this.tflService.getArrivals().getArrivalList();
         assertEquals("Test Destination Name", arrivals.getFirst().getDestinationName());
     }
 

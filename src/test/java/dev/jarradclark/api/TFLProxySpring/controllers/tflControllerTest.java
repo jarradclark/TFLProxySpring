@@ -3,14 +3,15 @@ package dev.jarradclark.api.TFLProxySpring.controllers;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import dev.jarradclark.api.TFLProxySpring.config.MainProperties;
 import dev.jarradclark.api.TFLProxySpring.services.TFLService;
 import dev.jarradclark.api.TFLProxySpring.services.model.Arrival;
 import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TFLContoller.class)
+@EnableConfigurationProperties(MainProperties.class)
 class TFLControllerTest {
 
     @Autowired

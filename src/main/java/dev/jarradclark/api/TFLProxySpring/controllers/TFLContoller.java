@@ -2,12 +2,10 @@ package dev.jarradclark.api.TFLProxySpring.controllers;
 
 import dev.jarradclark.api.TFLProxySpring.services.TFLService;
 import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class TFLContoller {
@@ -19,7 +17,7 @@ public class TFLContoller {
     }
 
     @GetMapping("allArrivals")
-    public ResponseEntity<ArrivalData> listArrivals() {
+    public ResponseEntity<ArrivalData> listArrivals(@RequestHeader HttpHeaders headers) {
         return new ResponseEntity<ArrivalData>(tflService.getArrivals(), HttpStatus.OK);
     }
 

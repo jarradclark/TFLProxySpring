@@ -1,0 +1,50 @@
+spring:
+  profiles:
+    active: dev
+
+main:
+  defaultStop: 490009538S
+
+stop-mapping:
+  stops:
+    490009538N: "MDV Road > Brentford"
+    490009538S: "MDV Road > Twickenham"
+    490007338JC: "Grainger Road"
+    490008512TH: "Isleworth War Memorial"
+    TestStop:   "Test Stop Name"
+
+destination-mapping:
+  destinations:
+    '[Hammersmith, Bus Station]': "Hammersmith"
+    '[West Middlesex Hospital]': "Westmid"
+    '[Isleworth, West Middlesex Hospital]': "Isleworth, Westmid"
+    '[Hounslow, Bell Corner]': "Hns, Bell Corner"
+    '[Richmond, Manor Circus]': "Richmond"
+    '[Example for Testing]': "Test Destination Name"
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+name: dev-YAML
+environment: development
+enabled: true
+
+main:
+  env: DEV
+  revertToDefaultValue: 10
+  revertToDefaultTimeUnit: SECONDS
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+name: prod-YAML
+environment: production
+enabled: true
+
+main:
+  env: PROD
+  revertToDefaultValue: 10
+  revertToDefaultTimeUnit: MINUTES
