@@ -34,6 +34,7 @@ main:
   env: DEV
   revertToDefaultValue: 10
   revertToDefaultTimeUnit: SECONDS
+  api-key: DEV_API_KEY
 
 ---
 spring:
@@ -48,3 +49,4 @@ main:
   env: PROD
   revertToDefaultValue: 10
   revertToDefaultTimeUnit: MINUTES
+  apiKey: REPLACE_ON_DEPLOY

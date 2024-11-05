@@ -14,4 +14,5 @@ public class MainProperties {
     private String defaultStop;
     private int revertToDefaultValue;
     private String revertToDefaultTimeUnit;
+    private String apiKey;
 }

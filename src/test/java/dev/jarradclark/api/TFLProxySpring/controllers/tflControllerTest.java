@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -31,6 +32,11 @@ class TFLControllerTest {
     @MockBean
     private TFLService service;
 
+    private final HttpHeaders authHeader = new HttpHeaders();
+    {
+        authHeader.set("API-Key", "DEV_API_KEY");
+    }
+    
     @Test
     @DisplayName("Should Get the results from the Service Layer for the current stop")
     void listArrivals() throws Exception {
@@ -38,7 +44,7 @@ class TFLControllerTest {
         ArrivalData arrivalData = ArrivalData.builder().arrivalList(arrivalList).build();
         when(service.getArrivals()).thenReturn(arrivalData);
 
-        this.mockMvc.perform(get("/allArrivals"))
+        this.mockMvc.perform(get("/allArrivals").headers(authHeader))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.arrivalList",hasSize(1)))
                 .andExpect(jsonPath("$.arrivalList.[0].destinationName").value("Testing"));
@@ -51,7 +57,7 @@ class TFLControllerTest {
         ArrivalData arrivalData = ArrivalData.builder().arrivalList(arrivalList).build();
         when(service.getArrivalsForStop("DiffStopId")).thenReturn(arrivalData);
 
-        this.mockMvc.perform(get("/arrivals/DiffStopId"))
+        this.mockMvc.perform(get("/arrivals/DiffStopId").headers(authHeader))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.arrivalList",hasSize(1)))
                 .andExpect(jsonPath("$.arrivalList.[0].destinationName").value("Diff Testing"));
@@ -59,10 +65,16 @@ class TFLControllerTest {
 
     @Test
     void changeStop() throws Exception{
-        this.mockMvc.perform(post("/changeCurrentStop/NewStopId"))
+        this.mockMvc.perform(post("/changeCurrentStop/NewStopId").headers(authHeader))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Stop Changed to NewStopId"));
         verify(service, atLeast(1)).setCurrentStop("NewStopId");
+    }
+
+    @Test
+    void shouldReturn401WhenNoAPIKey() throws Exception {
+        this.mockMvc.perform(get("/allArrivals"))
+                .andExpect(status().isUnauthorized());
     }
 
 }
