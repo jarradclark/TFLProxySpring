@@ -3,7 +3,6 @@ package dev.jarradclark.api.TFLProxySpring.services.impl;
 import dev.jarradclark.api.TFLProxySpring.config.MainProperties;
 import dev.jarradclark.api.TFLProxySpring.services.TFLHelper;
 import dev.jarradclark.api.TFLProxySpring.services.model.Arrival;
-import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalComparator;
 import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +11,13 @@ import org.springframework.stereotype.Service;
 import dev.jarradclark.api.TFLProxySpring.services.TFLClient;
 import dev.jarradclark.api.TFLProxySpring.services.TFLService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class TFLServiceImpl implements TFLService {
@@ -50,10 +51,9 @@ public class TFLServiceImpl implements TFLService {
         String stopName = tflHelper.getStopNameFromId(stopId);
         logger.info("Getting arrivals for stop [{}] [{}]", stopId, stopName);
         List<Arrival> arrivalList = reformatArrivalList(tflClient.getArrivalsForStop(stopId));
-        arrivalList.sort(new ArrivalComparator());
         return ArrivalData.builder()
                 .arrivalList(arrivalList)
-                  .currentStop(stopId)
+                .currentStop(stopId)
                 .stopName(stopName)
                 .build();
     }
@@ -71,11 +71,14 @@ public class TFLServiceImpl implements TFLService {
     }
 
     private List<Arrival> reformatArrivalList(List<Arrival> arrivalList) {
-        arrivalList.forEach(arrival -> {
-           arrival.setDestinationName(tflHelper.shortenDestinationName(arrival.getDestinationName()));
-           arrival.setArrivalMessage(tflHelper.getArrivalMessageFromSeconds(arrival.getTimeToStation()));
-        });
-        return arrivalList;
+        return arrivalList.stream()
+                .sorted(Comparator.comparing(Arrival::getTimeToStation))
+                .map(arrival ->
+                        new Arrival( arrival.getLineName(),
+                                tflHelper.shortenDestinationName(arrival.getDestinationName()),
+                                arrival.getTimeToStation(),
+                                tflHelper.getArrivalMessageFromSeconds(arrival.getTimeToStation())))
+                .collect(Collectors.toList());
     }
 
     private void scheduleDefaultStopReset() {

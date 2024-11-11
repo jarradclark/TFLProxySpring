@@ -34,9 +34,9 @@ import static org.mockito.Mockito.when;
 class TFLServiceImplTest {
     private static MemoryAppender appender;
 
-    Arrival first = Arrival.builder().lineName("First").destinationName("Destination1").timeToStation(50).build();
-    Arrival middle = Arrival.builder().lineName("Middle").destinationName("Destination1").timeToStation(100).build();
-    Arrival last = Arrival.builder().lineName("Last").destinationName("Test Destination").timeToStation(150).build();
+    Arrival first = Arrival.builder().lineName("First").destinationName("Destination1").timeToStation(50).arrivalMessage("Due").build();
+    Arrival middle = Arrival.builder().lineName("Middle").destinationName("Destination1").timeToStation(100).arrivalMessage("1m").build();
+    Arrival last = Arrival.builder().lineName("Last").destinationName("Test Destination").timeToStation(150).arrivalMessage("2m").build();
     List<Arrival> testArrival = Arrays.asList(middle, last, first);
 
     @MockBean
@@ -85,7 +85,7 @@ class TFLServiceImplTest {
 
     @Test
     void getArrivalsForStop() {
-        List<Arrival> testResponse = Collections.singletonList(Arrival.builder().destinationName("New Stop").timeToStation(1).build());
+        List<Arrival> testResponse = Collections.singletonList(Arrival.builder().destinationName("New Stop").timeToStation(1).arrivalMessage("Due").build());
         when(this.mockTflClient.getArrivalsForStop("TestStopID")).thenReturn(testResponse);
         List<Arrival> arrivals = this.tflService.getArrivalsForStop("TestStopID").getArrivalList();
         assertEquals(testResponse, arrivals);
@@ -100,7 +100,7 @@ class TFLServiceImplTest {
 
     @Test
     void changeCurrentStop() {
-        Arrival newArrival = Arrival.builder().lineName("Test123").destinationName("Test123").timeToStation(1).build();
+        Arrival newArrival = Arrival.builder().lineName("Test123").destinationName("Test123").timeToStation(1).arrivalMessage("Due").build();
         when(this.mockTflClient.getArrivalsForStop("NewStopID")).thenReturn(Collections.singletonList(newArrival));
 
         this.tflService.setCurrentStop("NewStopID");
