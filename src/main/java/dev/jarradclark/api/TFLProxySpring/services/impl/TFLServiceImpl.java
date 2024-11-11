@@ -15,6 +15,7 @@ import dev.jarradclark.api.TFLProxySpring.services.TFLService;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -24,6 +25,7 @@ public class TFLServiceImpl implements TFLService {
     private final MainProperties properties;
     private static final Logger logger = LoggerFactory.getLogger(TFLServiceImpl.class);
     private final ScheduledExecutorService taskScheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> scheduledResetTask;
     private final String defaultStop;
     public String currentStop;
 
@@ -47,11 +49,11 @@ public class TFLServiceImpl implements TFLService {
     public ArrivalData getArrivalsForStop(String stopId) {
         String stopName = tflHelper.getStopNameFromId(stopId);
         logger.info("Getting arrivals for stop [{}] [{}]", stopId, stopName);
-        List<Arrival> arrivalList = shortenDestinations(tflClient.getArrivalsForStop(stopId));
+        List<Arrival> arrivalList = reformatArrivalList(tflClient.getArrivalsForStop(stopId));
         arrivalList.sort(new ArrivalComparator());
         return ArrivalData.builder()
                 .arrivalList(arrivalList)
-                .currentStop(stopId)
+                  .currentStop(stopId)
                 .stopName(stopName)
                 .build();
     }
@@ -65,17 +67,30 @@ public class TFLServiceImpl implements TFLService {
     public void setCurrentStop(String newStop) {
         currentStop = newStop;
         logger.info("TFL Service set to new stop [{}] [{}]", newStop, tflHelper.getStopNameFromId(newStop));
-
-        Runnable testTask = () -> {
-            this.currentStop = this.defaultStop;
-            logger.info("Reset Current stop to default [{}]",this.defaultStop);
-        };
-        logger.debug("Service will reset to default in {} {}",properties.getRevertToDefaultValue(),properties.getRevertToDefaultTimeUnit());
-        this.taskScheduler.schedule(testTask, properties.getRevertToDefaultValue(), TimeUnit.valueOf(properties.getRevertToDefaultTimeUnit()));
+        scheduleDefaultStopReset();
     }
 
-    private List<Arrival> shortenDestinations(List<Arrival> arrivalList) {
-        arrivalList.forEach(arrival -> arrival.setDestinationName(tflHelper.shortenDestinationName(arrival.getDestinationName())));
+    private List<Arrival> reformatArrivalList(List<Arrival> arrivalList) {
+        arrivalList.forEach(arrival -> {
+           arrival.setDestinationName(tflHelper.shortenDestinationName(arrival.getDestinationName()));
+           arrival.setArrivalMessage(tflHelper.getArrivalMessageFromSeconds(arrival.getTimeToStation()));
+        });
         return arrivalList;
     }
+
+    private void scheduleDefaultStopReset() {
+        if (this.scheduledResetTask != null && !this.scheduledResetTask.isDone()) {
+            this.scheduledResetTask.cancel(true);
+            logger.debug("Canceling existing scheduled task");
+        }
+
+        Runnable scheduledTask = () -> {
+            this.currentStop = this.defaultStop;
+            logger.info("Scheduled reset of current stop back to default [{}]",this.defaultStop);
+        };
+        logger.debug("Service will reset to default in {} {}",properties.getRevertToDefaultValue(),properties.getRevertToDefaultTimeUnit());
+        this.scheduledResetTask = this.taskScheduler.schedule(scheduledTask, properties.getRevertToDefaultValue(), TimeUnit.valueOf(properties.getRevertToDefaultTimeUnit()));
+
+    }
 }
+

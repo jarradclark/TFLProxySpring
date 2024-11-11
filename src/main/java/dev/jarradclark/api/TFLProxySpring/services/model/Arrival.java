@@ -13,5 +13,6 @@ public class Arrival {
     private String lineName;
     private String destinationName;
     private Integer timeToStation;
+    private String arrivalMessage;
 }
 

@@ -36,7 +36,7 @@ class TFLControllerTest {
     {
         authHeader.set("API-Key", "DEV_API_KEY");
     }
-    
+
     @Test
     @DisplayName("Should Get the results from the Service Layer for the current stop")
     void listArrivals() throws Exception {

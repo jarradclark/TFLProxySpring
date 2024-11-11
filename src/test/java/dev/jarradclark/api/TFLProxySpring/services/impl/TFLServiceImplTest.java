@@ -1,27 +1,38 @@
 package dev.jarradclark.api.TFLProxySpring.services.impl;
 
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import dev.jarradclark.api.TFLProxySpring.config.MainProperties;
+import dev.jarradclark.api.TFLProxySpring.helpers.MemoryAppender;
 import dev.jarradclark.api.TFLProxySpring.services.TFLClient;
 import dev.jarradclark.api.TFLProxySpring.services.TFLHelper;
 import dev.jarradclark.api.TFLProxySpring.services.TFLService;
 import dev.jarradclark.api.TFLProxySpring.services.model.Arrival;
 import dev.jarradclark.api.TFLProxySpring.services.model.ArrivalData;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
 class TFLServiceImplTest {
+    private static MemoryAppender appender;
 
     Arrival first = Arrival.builder().lineName("First").destinationName("Destination1").timeToStation(50).build();
     Arrival middle = Arrival.builder().lineName("Middle").destinationName("Destination1").timeToStation(100).build();
@@ -40,6 +51,18 @@ class TFLServiceImplTest {
     @Autowired
     private MainProperties properties;
 
+    @BeforeAll
+    static void setup() {
+        appender = new MemoryAppender();
+        appender.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
+        appender.start();
+    }
+
+    @AfterEach
+    void cleanup() {
+         appender.reset();
+    }
+
     @Test
     void getArrivalsAreSortedByArrivalTime() {
         when(mockTflClient.getArrivalsForStop(this.tflService.getCurrentStop())).thenReturn(testArrival);
@@ -51,14 +74,29 @@ class TFLServiceImplTest {
     }
 
     @Test
+    void getArrivalsShouldHaveValidArrivalMessagesAdded() {
+        when(mockTflClient.getArrivalsForStop(this.tflService.getCurrentStop())).thenReturn(testArrival);
+
+        List<Arrival> arrivalList = this.tflService.getArrivals().getArrivalList();
+        assertEquals("Due", arrivalList.getFirst().getArrivalMessage());
+        assertEquals("1m", arrivalList.get(1).getArrivalMessage());
+        assertEquals("2m", arrivalList.getLast().getArrivalMessage());
+    }
+
+    @Test
     void getArrivalsForStop() {
-        TFLService tflService = new TFLServiceImpl(this.mockTflClient, properties);
-        List<Arrival> testResponse = Collections.singletonList(Arrival.builder().destinationName("New Stop").build());
+        List<Arrival> testResponse = Collections.singletonList(Arrival.builder().destinationName("New Stop").timeToStation(1).build());
         when(this.mockTflClient.getArrivalsForStop("TestStopID")).thenReturn(testResponse);
         List<Arrival> arrivals = this.tflService.getArrivalsForStop("TestStopID").getArrivalList();
         assertEquals(testResponse, arrivals);
     }
 
+    @Test
+    void shouldSuppressErrorsFromClient() {
+        when(mockTflClient.getArrivalsForStop("THROW")).thenThrow(new RestClientException("Testing"));
+        List<Arrival> arrivals = this.tflService.getArrivalsForStop("TestStopID").getArrivalList();
+        assertEquals(0,arrivals.size());
+    }
 
     @Test
     void changeCurrentStop() {
@@ -78,11 +116,42 @@ class TFLServiceImplTest {
 
     @Test
     void testDestinationNameChanges() {
-        Arrival newArrival = Arrival.builder().destinationName("Example for Testing").build();
+        Arrival newArrival = Arrival.builder().destinationName("Example for Testing").timeToStation(59).build();
         when(mockTflClient.getArrivalsForStop("DestinationTest")).thenReturn(Collections.singletonList(newArrival));
         this.tflService.setCurrentStop("DestinationTest");
         List<Arrival> arrivals = this.tflService.getArrivals().getArrivalList();
         assertEquals("Test Destination Name", arrivals.getFirst().getDestinationName());
+    }
+
+    @Test
+    void shouldScheduleDefaultStopResetOnStopChange() {
+        Logger logger = (Logger) LoggerFactory.getLogger(TFLServiceImpl.class);
+        logger.addAppender(appender);
+
+        properties.setRevertToDefaultValue(1);
+        properties.setRevertToDefaultTimeUnit(TimeUnit.NANOSECONDS.name());
+
+        this.tflService.setCurrentStop("TestStop");
+
+        assertTrue(appender.contains("TFL Service set to new stop [TestStop] [Test Stop Name]", Level.INFO));
+        String revertMessage = String.format("Service will reset to default in %s %s", properties.getRevertToDefaultValue(), properties.getRevertToDefaultTimeUnit());
+        assertTrue(appender.contains(revertMessage, Level.DEBUG));
+        // May need to consider a very short sleep here
+        assertTrue(appender.contains(String.format("Scheduled reset of current stop back to default [%s]",properties.getDefaultStop()), Level.INFO));
+    }
+
+    @Test
+    void willCancelScheduledResetOnNewRequest() {
+        Logger logger = (Logger) LoggerFactory.getLogger(TFLServiceImpl.class);
+        logger.addAppender(appender);
+
+        properties.setRevertToDefaultValue(1);
+        properties.setRevertToDefaultTimeUnit(TimeUnit.HOURS.name());
+
+        this.tflService.setCurrentStop("TestStop");
+        this.tflService.setCurrentStop("TestStop");
+
+        assertTrue(appender.contains("Canceling existing scheduled task", Level.DEBUG));
     }
 
 }

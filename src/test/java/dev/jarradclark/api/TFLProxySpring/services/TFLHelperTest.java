@@ -31,4 +31,14 @@ class TFLHelperTest {
     void getStopNameFromIdDefaults() {
         assertEquals("Unknown", tflHelper.getStopNameFromId("ShouldBeUnknown"));
     }
+
+    @Test
+    void arrivalMessageShouldBeDueWhenLessThan60Seconds() { assertEquals("Due", tflHelper.getArrivalMessageFromSeconds(59)); }
+
+    @Test
+    void arrivalMessageShouldBeSingleMinuteAt60Seconds() { assertEquals("1m", tflHelper.getArrivalMessageFromSeconds(60)); }
+
+    @Test
+    void arrivalMessageShouldRoundDownToCompleteWholeMinute() { assertEquals("2m", tflHelper.getArrivalMessageFromSeconds(179)); }
+
 }

@@ -39,4 +39,12 @@ public class TFLHelper {
         return "Unknown";
     }
 
+    public String getArrivalMessageFromSeconds(int seconds) {
+        if (seconds < 60) {
+            return "Due";
+        } else {
+            return String.format("%sm", Math.round(seconds / 60));
+        }
+    }
+
 }
