@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prod
 
 main:
   defaultStop: 490009538S
@@ -29,11 +29,6 @@ spring:
 name: dev-YAML
 environment: development
 enabled: true
-
-logging:
-  level:
-    root: "debug"
-    org.springframework.web: "info"
 
 main:
   env: DEV
