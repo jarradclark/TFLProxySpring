@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: dev
 
 main:
   defaultStop: 490009538S

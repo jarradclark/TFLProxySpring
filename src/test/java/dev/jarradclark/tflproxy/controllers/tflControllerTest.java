@@ -22,7 +22,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(TFLContoller.class)
+@WebMvcTest(TFLController.class)
 @EnableConfigurationProperties(MainProperties.class)
 class TFLControllerTest {
 
@@ -44,7 +44,7 @@ class TFLControllerTest {
         ArrivalData arrivalData = ArrivalData.builder().arrivalList(arrivalList).build();
         when(service.getArrivals()).thenReturn(arrivalData);
 
-        this.mockMvc.perform(get("/allArrivals").headers(authHeader))
+        mockMvc.perform(get("/allArrivals").headers(authHeader))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.arrivalList",hasSize(1)))
                 .andExpect(jsonPath("$.arrivalList.[0].destinationName").value("Testing"));
@@ -57,7 +57,7 @@ class TFLControllerTest {
         ArrivalData arrivalData = ArrivalData.builder().arrivalList(arrivalList).build();
         when(service.getArrivalsForStop("DiffStopId")).thenReturn(arrivalData);
 
-        this.mockMvc.perform(get("/arrivals/DiffStopId").headers(authHeader))
+        mockMvc.perform(get("/arrivals/DiffStopId").headers(authHeader))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.arrivalList",hasSize(1)))
                 .andExpect(jsonPath("$.arrivalList.[0].destinationName").value("Diff Testing"));
@@ -65,7 +65,7 @@ class TFLControllerTest {
 
     @Test
     void changeStop() throws Exception{
-        this.mockMvc.perform(post("/changeCurrentStop/NewStopId").headers(authHeader))
+        mockMvc.perform(post("/changeCurrentStop/NewStopId").headers(authHeader))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Stop Changed to NewStopId"));
         verify(service, atLeast(1)).setCurrentStop("NewStopId");
@@ -73,7 +73,7 @@ class TFLControllerTest {
 
     @Test
     void shouldReturn401WhenNoAPIKey() throws Exception {
-        this.mockMvc.perform(get("/allArrivals"))
+        mockMvc.perform(get("/allArrivals"))
                 .andExpect(status().isUnauthorized());
     }
 

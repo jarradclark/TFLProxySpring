@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 
 @RestController
-public class TFLContoller {
+public class TFLController {
 
     private final TFLService tflService;
 
     @Autowired
     private MainProperties properties;
 
-    public TFLContoller(TFLService tflService) {
+    public TFLController(TFLService tflService) {
         this.tflService = tflService;
     }
 

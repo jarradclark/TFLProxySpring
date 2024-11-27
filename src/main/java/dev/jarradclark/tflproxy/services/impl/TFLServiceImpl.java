@@ -28,7 +28,7 @@ public class TFLServiceImpl implements TFLService {
     private final ScheduledExecutorService taskScheduler = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> scheduledResetTask;
     private final String defaultStop;
-    public String currentStop;
+    private String currentStop;
 
     @Autowired
     private TFLHelper tflHelper;
