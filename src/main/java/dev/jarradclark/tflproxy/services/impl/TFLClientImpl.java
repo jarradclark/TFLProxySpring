@@ -39,6 +39,7 @@ public class TFLClientImpl implements TFLClient {
 
             return response.getBody();
         } catch (RestClientException exception) {
+            logger.error("Rest Client had an error when retrieving data from TFL",exception);
             throw exception;
         }
     }
