@@ -43,7 +43,7 @@ public class TFLHelper {
         if (seconds < 60) {
             return "Due";
         } else {
-            return String.format("%sm", Math.round(seconds / 60));
+            return String.format("%sm", Math.round((float) (seconds / 60)));
         }
     }
 

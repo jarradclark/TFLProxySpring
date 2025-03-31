@@ -11,6 +11,7 @@ import dev.jarradclark.tflproxy.services.TFLHelper;
 import dev.jarradclark.tflproxy.services.TFLService;
 import dev.jarradclark.tflproxy.services.model.Arrival;
 import dev.jarradclark.tflproxy.services.model.ArrivalData;
+import dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,7 @@ class TFLServiceImplTest {
         when(mockTflClient.getArrivalsForStop(this.tflService.getCurrentStop())).thenReturn(testArrival);
 
         List<Arrival> arrivalList = this.tflService.getArrivals().getArrivalList();
+
         assertEquals("Due", arrivalList.getFirst().getArrivalMessage());
         assertEquals("1m", arrivalList.get(1).getArrivalMessage());
         assertEquals("2m", arrivalList.getLast().getArrivalMessage());
@@ -152,6 +154,17 @@ class TFLServiceImplTest {
         this.tflService.setCurrentStop("TestStop");
 
         assertTrue(appender.contains("Canceling existing scheduled task", Level.DEBUG));
+    }
+
+    @Test
+    void getCurrentScheduledResetConfiguration() {
+        properties.setRevertToDefaultValue(99);
+        properties.setRevertToDefaultTimeUnit(TimeUnit.HOURS.name());
+
+        ScheduledResetConfiguration scheduledResetConfiguration = this.tflService.getCurrentScheduledResetConfiguration();
+
+        assertEquals(99, scheduledResetConfiguration.getValue());
+        assertEquals(TimeUnit.HOURS.name(), scheduledResetConfiguration.getUnit());
     }
 
 }

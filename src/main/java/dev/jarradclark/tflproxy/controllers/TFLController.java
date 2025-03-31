@@ -3,6 +3,7 @@ package dev.jarradclark.tflproxy.controllers;
 import dev.jarradclark.tflproxy.config.MainProperties;
 import dev.jarradclark.tflproxy.services.TFLService;
 import dev.jarradclark.tflproxy.services.model.ArrivalData;
+import dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,13 @@ public class TFLController {
 
         tflService.setCurrentStop(stopId);
         return new ResponseEntity<String>(String.format("Stop Changed to %s", stopId), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("currentScheduledResetConfiguration")
+    public ResponseEntity<ScheduledResetConfiguration> currentScheduledResetConfiguration(@RequestHeader HttpHeaders headers) {
+        if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<ScheduledResetConfiguration>(tflService.getCurrentScheduledResetConfiguration(), HttpStatus.OK);
     }
 
     private boolean isAuthorisedRequest(HttpHeaders headers) {

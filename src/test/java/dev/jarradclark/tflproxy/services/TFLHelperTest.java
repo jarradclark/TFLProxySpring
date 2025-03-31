@@ -39,6 +39,9 @@ class TFLHelperTest {
     void arrivalMessageShouldBeSingleMinuteAt60Seconds() { assertEquals("1m", tflHelper.getArrivalMessageFromSeconds(60)); }
 
     @Test
+    void arrivalMessageShouldBeSingleMinuteJustOver60Seconds() { assertEquals("1m", tflHelper.getArrivalMessageFromSeconds(61)); }
+
+    @Test
     void arrivalMessageShouldRoundDownToCompleteWholeMinute() { assertEquals("2m", tflHelper.getArrivalMessageFromSeconds(179)); }
 
 }

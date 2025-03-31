@@ -8,6 +8,7 @@ import dev.jarradclark.tflproxy.config.MainProperties;
 import dev.jarradclark.tflproxy.services.TFLService;
 import dev.jarradclark.tflproxy.services.model.Arrival;
 import dev.jarradclark.tflproxy.services.model.ArrivalData;
+import dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,19 @@ class TFLControllerTest {
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Stop Changed to NewStopId"));
         verify(service, atLeast(1)).setCurrentStop("NewStopId");
+    }
+
+    @Test
+    @DisplayName("Should return current scheduled reset configuration")
+    void currentScheduledResetConfiguration() throws Exception {
+        ScheduledResetConfiguration configuration = ScheduledResetConfiguration.builder().unit("TestUnit").value(87).build();
+
+        when(service.getCurrentScheduledResetConfiguration()).thenReturn(configuration);
+
+        mockMvc.perform(get("/currentScheduledResetConfiguration").headers(authHeader))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.value").value(87))
+                .andExpect(jsonPath("$.unit").value("TestUnit"));
     }
 
     @Test

@@ -4,6 +4,7 @@ import dev.jarradclark.tflproxy.config.MainProperties;
 import dev.jarradclark.tflproxy.services.TFLHelper;
 import dev.jarradclark.tflproxy.services.model.Arrival;
 import dev.jarradclark.tflproxy.services.model.ArrivalData;
+import dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,14 @@ public class TFLServiceImpl implements TFLService {
         scheduleDefaultStopReset();
     }
 
+    @Override
+    public ScheduledResetConfiguration getCurrentScheduledResetConfiguration() {
+        return ScheduledResetConfiguration.builder()
+                .unit(properties.getRevertToDefaultTimeUnit())
+                .value(properties.getRevertToDefaultValue())
+                .build();
+    }
+
     private List<Arrival> reformatArrivalList(List<Arrival> arrivalList) {
         return arrivalList.stream()
                 .sorted(Comparator.comparing(Arrival::getTimeToStation))
@@ -93,7 +102,6 @@ public class TFLServiceImpl implements TFLService {
         };
         logger.debug("Service will reset to default in {} {}",properties.getRevertToDefaultValue(),properties.getRevertToDefaultTimeUnit());
         this.scheduledResetTask = this.taskScheduler.schedule(scheduledTask, properties.getRevertToDefaultValue(), TimeUnit.valueOf(properties.getRevertToDefaultTimeUnit()));
-
     }
 }
 
