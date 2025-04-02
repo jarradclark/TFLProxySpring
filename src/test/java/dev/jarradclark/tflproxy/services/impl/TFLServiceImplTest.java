@@ -26,8 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 
@@ -157,14 +156,39 @@ class TFLServiceImplTest {
     }
 
     @Test
-    void getCurrentScheduledResetConfiguration() {
+    void getScheduledResetConfiguration() {
         properties.setRevertToDefaultValue(99);
         properties.setRevertToDefaultTimeUnit(TimeUnit.HOURS.name());
 
-        ScheduledResetConfiguration scheduledResetConfiguration = this.tflService.getCurrentScheduledResetConfiguration();
+        ScheduledResetConfiguration scheduledResetConfiguration = this.tflService.getScheduledResetConfiguration();
 
         assertEquals(99, scheduledResetConfiguration.getValue());
-        assertEquals(TimeUnit.HOURS.name(), scheduledResetConfiguration.getUnit());
+        assertEquals(TimeUnit.HOURS.name(), scheduledResetConfiguration.getTimeUnit());
+    }
+
+    @Test
+    void setScheduledResetConfiguration() {
+        properties.setRevertToDefaultValue(99);
+        properties.setRevertToDefaultTimeUnit(TimeUnit.HOURS.name());
+
+        this.tflService.setScheduledResetConfiguration(88, "Minutes");
+
+        ScheduledResetConfiguration scheduledResetConfiguration = this.tflService.getScheduledResetConfiguration();
+
+        assertEquals(88, scheduledResetConfiguration.getValue());
+        assertEquals(TimeUnit.MINUTES.name(), scheduledResetConfiguration.getTimeUnit());
+    }
+
+    @Test
+    void setScheduledResetConfigurationShouldValidateUnit() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> this.tflService.setScheduledResetConfiguration(88,"InvalidInit"));
+        assertTrue(exception.getMessage().contains("Invalid Time Unit"),"Should throw an exception reporting timeunit is invalid");
+    }
+
+    @Test
+    void setScheduledResetConfigurationShouldValidateValueIsPositive() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> this.tflService.setScheduledResetConfiguration(-1,"Hours"));
+        assertTrue(exception.getMessage().contains("Value must be a positive value"),"Should throw an exception when the new value is a < 1");
     }
 
 }

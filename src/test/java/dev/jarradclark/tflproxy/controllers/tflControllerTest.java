@@ -75,9 +75,9 @@ class TFLControllerTest {
     @Test
     @DisplayName("Should return current scheduled reset configuration")
     void currentScheduledResetConfiguration() throws Exception {
-        ScheduledResetConfiguration configuration = ScheduledResetConfiguration.builder().unit("TestUnit").value(87).build();
+        ScheduledResetConfiguration configuration = ScheduledResetConfiguration.builder().timeUnit("TestUnit").value(87).build();
 
-        when(service.getCurrentScheduledResetConfiguration()).thenReturn(configuration);
+        when(service.getScheduledResetConfiguration()).thenReturn(configuration);
 
         mockMvc.perform(get("/currentScheduledResetConfiguration").headers(authHeader))
                 .andExpect(status().isOk())

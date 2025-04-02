@@ -50,7 +50,7 @@ public class TFLController {
     public ResponseEntity<ScheduledResetConfiguration> currentScheduledResetConfiguration(@RequestHeader HttpHeaders headers) {
         if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-        return new ResponseEntity<ScheduledResetConfiguration>(tflService.getCurrentScheduledResetConfiguration(), HttpStatus.OK);
+        return new ResponseEntity<ScheduledResetConfiguration>(tflService.getScheduledResetConfiguration(), HttpStatus.OK);
     }
 
     private boolean isAuthorisedRequest(HttpHeaders headers) {

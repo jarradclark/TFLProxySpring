@@ -9,5 +9,6 @@ public interface TFLService {
     ArrivalData getArrivalsForStop(String stopId);
     String getCurrentStop();
     void setCurrentStop(String newStop);
-    ScheduledResetConfiguration getCurrentScheduledResetConfiguration();
+    ScheduledResetConfiguration getScheduledResetConfiguration();
+    void setScheduledResetConfiguration(int value, String timeUnit);
 }

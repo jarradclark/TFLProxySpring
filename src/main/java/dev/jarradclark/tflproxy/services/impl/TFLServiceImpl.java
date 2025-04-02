@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import dev.jarradclark.tflproxy.services.TFLClient;
 import dev.jarradclark.tflproxy.services.TFLService;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -72,11 +73,28 @@ public class TFLServiceImpl implements TFLService {
     }
 
     @Override
-    public ScheduledResetConfiguration getCurrentScheduledResetConfiguration() {
+    public ScheduledResetConfiguration getScheduledResetConfiguration() {
         return ScheduledResetConfiguration.builder()
-                .unit(properties.getRevertToDefaultTimeUnit())
+                .timeUnit(properties.getRevertToDefaultTimeUnit())
                 .value(properties.getRevertToDefaultValue())
                 .build();
+    }
+
+    @Override
+    public void setScheduledResetConfiguration(int value, String timeUnit) {
+        if(Arrays.stream(TimeUnit.values()).noneMatch(unit -> unit.name().equalsIgnoreCase(timeUnit))) {
+            logger.error("setScheduledResetConfiguration received [{}] which is not a valid Time Unit",timeUnit);
+            throw new IllegalArgumentException("Invalid Time Unit");
+        }
+        if(value < 1) {
+            logger.error("setScheduledResetConfiguration received a value of [{}] which is not a interval",timeUnit);
+            throw new IllegalArgumentException("Value must be a positive value");
+        }
+
+        properties.setRevertToDefaultValue(value);
+        properties.setRevertToDefaultTimeUnit(TimeUnit.valueOf(timeUnit.toUpperCase()).name());
+
+        logger.info("Scheduled revert updated to reset after [{}] [{}]", value, timeUnit);
     }
 
     private List<Arrival> reformatArrivalList(List<Arrival> arrivalList) {
