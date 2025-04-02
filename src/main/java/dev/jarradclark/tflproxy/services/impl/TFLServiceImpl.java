@@ -81,7 +81,7 @@ public class TFLServiceImpl implements TFLService {
     }
 
     @Override
-    public void setScheduledResetConfiguration(int value, String timeUnit) {
+    public ScheduledResetConfiguration setScheduledResetConfiguration(int value, String timeUnit) {
         if(Arrays.stream(TimeUnit.values()).noneMatch(unit -> unit.name().equalsIgnoreCase(timeUnit))) {
             logger.error("setScheduledResetConfiguration received [{}] which is not a valid Time Unit",timeUnit);
             throw new IllegalArgumentException("Invalid Time Unit");
@@ -95,6 +95,8 @@ public class TFLServiceImpl implements TFLService {
         properties.setRevertToDefaultTimeUnit(TimeUnit.valueOf(timeUnit.toUpperCase()).name());
 
         logger.info("Scheduled revert updated to reset after [{}] [{}]", value, timeUnit);
+
+        return getScheduledResetConfiguration();
     }
 
     private List<Arrival> reformatArrivalList(List<Arrival> arrivalList) {

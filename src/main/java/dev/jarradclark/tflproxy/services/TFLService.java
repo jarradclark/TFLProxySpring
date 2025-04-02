@@ -10,5 +10,5 @@ public interface TFLService {
     String getCurrentStop();
     void setCurrentStop(String newStop);
     ScheduledResetConfiguration getScheduledResetConfiguration();
-    void setScheduledResetConfiguration(int value, String timeUnit);
+    ScheduledResetConfiguration setScheduledResetConfiguration(int value, String timeUnit);
 }

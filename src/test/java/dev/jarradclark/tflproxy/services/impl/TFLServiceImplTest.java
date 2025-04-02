@@ -171,12 +171,10 @@ class TFLServiceImplTest {
         properties.setRevertToDefaultValue(99);
         properties.setRevertToDefaultTimeUnit(TimeUnit.HOURS.name());
 
-        this.tflService.setScheduledResetConfiguration(88, "Minutes");
+        ScheduledResetConfiguration newConfiguration = this.tflService.setScheduledResetConfiguration(88, "Minutes");
 
-        ScheduledResetConfiguration scheduledResetConfiguration = this.tflService.getScheduledResetConfiguration();
-
-        assertEquals(88, scheduledResetConfiguration.getValue());
-        assertEquals(TimeUnit.MINUTES.name(), scheduledResetConfiguration.getTimeUnit());
+        assertEquals(88, newConfiguration.getValue());
+        assertEquals(TimeUnit.MINUTES.name(), newConfiguration.getTimeUnit());
     }
 
     @Test

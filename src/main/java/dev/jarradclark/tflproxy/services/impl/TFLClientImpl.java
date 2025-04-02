@@ -25,7 +25,7 @@ public class TFLClientImpl implements TFLClient {
 
     @Override
     public List<Arrival> getArrivalsForStop(String stopId) {
-        final ParameterizedTypeReference<List<Arrival>> arrivalsList = new ParameterizedTypeReference<List<Arrival>>() {
+        final ParameterizedTypeReference<List<Arrival>> arrivalsList = new ParameterizedTypeReference<>() {
         } ;
 
         try {
