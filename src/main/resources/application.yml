@@ -1,6 +1,10 @@
+
 spring:
+  application:
+    name: tfl-proxy
   profiles:
     active: dev
+
 
 main:
   defaultStop: 490009538S
@@ -31,16 +35,23 @@ main:
   env: DEV
   revertToDefaultValue: 10
   revertToDefaultTimeUnit: SECONDS
-  api-key: DEV_API_KEY
+  apiKey: DEV_API_KEY
 
 ---
 spring:
   config:
     activate:
       on-profile: prod
+    import:
+      - "optional:aws-parameterstore:/config/tfl-proxy/"
+aws:
+  paramstore:
+    prefix: /config
+    default-context: tfl-proxy
+    profile-separator: _
 
 main:
   env: PROD
   revertToDefaultValue: 10
   revertToDefaultTimeUnit: MINUTES
-  apiKey: REPLACE_ON_DEPLOY
+  apiKey: MOVING_TO_AWS_PARAMETER_STORE

@@ -5,6 +5,8 @@ import dev.jarradclark.tflproxy.services.TFLService;
 import dev.jarradclark.tflproxy.services.model.ArrivalData;
 import dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ import java.util.Objects;
 public class TFLController {
 
     private final TFLService tflService;
+
+    private static final Logger logger = LoggerFactory.getLogger(TFLController.class);
 
     @Autowired
     private MainProperties properties;
@@ -64,7 +68,6 @@ public class TFLController {
         if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         try {
-            System.out.println("GOT VALUES ["+resetConfiguration.getValue()+"] ["+resetConfiguration.getTimeUnit()+"]");
             ScheduledResetConfiguration newConfiguration = tflService.setScheduledResetConfiguration(resetConfiguration.getValue(), resetConfiguration.getTimeUnit());
             return new ResponseEntity<>(newConfiguration, HttpStatus.ACCEPTED);
         } catch (IllegalArgumentException e) {
@@ -87,6 +90,7 @@ public class TFLController {
     }
 
     private boolean isAuthorisedRequest(HttpHeaders headers) {
+        logger.warn("Request made with invalid API-Key. Current key ends with {}", properties.getApiKey().substring(properties.getApiKey().length() - 3));
         return !Objects.equals(headers.getFirst("API-Key"), properties.getApiKey());
     }
 }

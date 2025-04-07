@@ -13,7 +13,9 @@
         </root>
     </springProfile>
 
-    <springProfile name="production">
+    <springProfile name="prod">
+        <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
         <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>/var/log/TFLProxy/main.log</file>
 
