@@ -36,21 +36,21 @@ public class TFLController {
 
     @GetMapping("allArrivals")
     public ResponseEntity<ArrivalData> listArrivals(@RequestHeader HttpHeaders headers) {
-        if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         return new ResponseEntity<>(tflService.getArrivals(), HttpStatus.OK);
     }
 
     @GetMapping("arrivals/{stopId}")
     public ResponseEntity<ArrivalData> listArrivalsForStop(@RequestHeader HttpHeaders headers, @PathVariable String stopId) {
-        if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         return new ResponseEntity<>(tflService.getArrivalsForStop(stopId), HttpStatus.OK);
     }
 
     @PostMapping("changeCurrentStop/{stopId}")
     public ResponseEntity<String> changeCurrentStop(@RequestHeader HttpHeaders headers, @PathVariable String stopId) {
-        if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         tflService.setCurrentStop(stopId);
         return new ResponseEntity<>(String.format("Stop Changed to %s", stopId), HttpStatus.ACCEPTED);
@@ -58,14 +58,14 @@ public class TFLController {
 
     @GetMapping("currentScheduledResetConfiguration")
     public ResponseEntity<ScheduledResetConfiguration> currentScheduledResetConfiguration(@RequestHeader HttpHeaders headers) {
-        if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         return new ResponseEntity<>(tflService.getScheduledResetConfiguration(), HttpStatus.OK);
     }
 
     @PatchMapping("setScheduledResetConfiguration")
     public ResponseEntity<ScheduledResetConfiguration> setScheduledResetConfiguration(@RequestHeader HttpHeaders headers,@Valid @RequestBody ScheduledResetConfiguration resetConfiguration) {
-        if (isAuthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         try {
             ScheduledResetConfiguration newConfiguration = tflService.setScheduledResetConfiguration(resetConfiguration.getValue(), resetConfiguration.getTimeUnit());
@@ -89,8 +89,9 @@ public class TFLController {
         return errors;
     }
 
-    private boolean isAuthorisedRequest(HttpHeaders headers) {
-        logger.warn("Request made with invalid API-Key. Current key ends with {}", properties.getApiKey().substring(properties.getApiKey().length() - 3));
-        return !Objects.equals(headers.getFirst("API-Key"), properties.getApiKey());
+    private boolean isUnauthorisedRequest(HttpHeaders headers) {
+        boolean isMissingOrInvalidKey = !Objects.equals(headers.getFirst("API-Key"), properties.getApiKey());
+        if (isMissingOrInvalidKey) logger.warn("Request made with invalid API-Key. Current key ends with {}", properties.getApiKey().substring(properties.getApiKey().length() - 3));
+        return isMissingOrInvalidKey;
     }
 }
