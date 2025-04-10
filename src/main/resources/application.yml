@@ -43,10 +43,10 @@ spring:
     activate:
       on-profile: prod
     import:
-      - "optional:aws-parameterstore:/config/tfl-proxy/"
+      - "optional:aws-parameterstore:/tfl-proxy/"
 aws:
   paramstore:
-    prefix: /config
+    prefix: /tfl-proxy
     default-context: tfl-proxy
     profile-separator: _
 
@@ -54,4 +54,3 @@ main:
   env: PROD
   revertToDefaultValue: 10
   revertToDefaultTimeUnit: MINUTES
-  apiKey: MOVING_TO_AWS_PARAMETER_STORE
