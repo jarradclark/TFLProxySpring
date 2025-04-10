@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ * Used to store the mapping configurations of stopId's to stop names
+ */
 @Setter
 @Getter
 @Component

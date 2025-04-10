@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+/**
+ * Used to store the scheduled reset configuration
+ */
 @Data
 @AllArgsConstructor
 @Builder

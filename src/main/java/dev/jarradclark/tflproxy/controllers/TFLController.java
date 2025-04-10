@@ -34,6 +34,11 @@ public class TFLController {
         this.tflService = tflService;
     }
 
+    /**
+     * List all arrivals for the servers currently configured stop
+     * @param headers Any attached headers sent as part of the request
+     * @return A Response Entity containing the arrival list as Json document
+     */
     @GetMapping("allArrivals")
     public ResponseEntity<ArrivalData> listArrivals(@RequestHeader HttpHeaders headers) {
         if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -41,6 +46,12 @@ public class TFLController {
         return new ResponseEntity<>(tflService.getArrivals(), HttpStatus.OK);
     }
 
+    /**
+     * List all arrivals for the requested stop id
+     * @param headers Any attached headers sent as part of the request
+     * @param stopId The stop id you wish to retrieve the arrival list for
+     * @return A Response Entity containing the arrival list as Json document
+     */
     @GetMapping("arrivals/{stopId}")
     public ResponseEntity<ArrivalData> listArrivalsForStop(@RequestHeader HttpHeaders headers, @PathVariable String stopId) {
         if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -48,6 +59,12 @@ public class TFLController {
         return new ResponseEntity<>(tflService.getArrivalsForStop(stopId), HttpStatus.OK);
     }
 
+    /**
+     * Changes the currently configured stop id for the server (used to change the result from listArrivals)
+     * @param headers Any attached headers sent as part of the request
+     * @param stopId The stop id you wish to set the server to use (until reset)
+     * @return The outcome of the requested
+     */
     @PostMapping("changeCurrentStop/{stopId}")
     public ResponseEntity<String> changeCurrentStop(@RequestHeader HttpHeaders headers, @PathVariable String stopId) {
         if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -56,6 +73,11 @@ public class TFLController {
         return new ResponseEntity<>(String.format("Stop Changed to %s", stopId), HttpStatus.ACCEPTED);
     }
 
+    /**
+     * Get the currently scheduled reset configuration
+     * @param headers Any attached headers sent as part of the request
+     * @return A Response Entity containing the current configuration as a Json document
+     */
     @GetMapping("currentScheduledResetConfiguration")
     public ResponseEntity<ScheduledResetConfiguration> currentScheduledResetConfiguration(@RequestHeader HttpHeaders headers) {
         if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -63,6 +85,12 @@ public class TFLController {
         return new ResponseEntity<>(tflService.getScheduledResetConfiguration(), HttpStatus.OK);
     }
 
+    /**
+     * Changes the current scheduled reset configuration with the supplied parameters
+     * @param headers Any attached headers sent as part of the request
+     * @param resetConfiguration A valid ScheduledResetConfiguration object see {@link dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration} for details
+     * @return The outcome of the change and the new scheduled reset configuration as a Json document
+     */
     @PatchMapping("setScheduledResetConfiguration")
     public ResponseEntity<ScheduledResetConfiguration> setScheduledResetConfiguration(@RequestHeader HttpHeaders headers,@Valid @RequestBody ScheduledResetConfiguration resetConfiguration) {
         if (isUnauthorisedRequest(headers)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

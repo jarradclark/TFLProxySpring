@@ -9,6 +9,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * The main Application Class
+ */
 @SpringBootApplication
 @EnableScheduling
 public class TFLProxyApplication implements CommandLineRunner {
@@ -18,6 +21,10 @@ public class TFLProxyApplication implements CommandLineRunner {
 	@Autowired
 	private MainProperties properties;
 
+	/**
+	 * The main method for this app
+	 * @param args The command line arguments.
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(TFLProxyApplication.class, args);
 	}
