@@ -1,12 +1,15 @@
 package dev.jarradclark.tflproxy;
 
+import dev.jarradclark.tflproxy.config.DestinationMapping;
 import dev.jarradclark.tflproxy.config.MainProperties;
+import dev.jarradclark.tflproxy.config.StopMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -14,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
+@EnableConfigurationProperties({StopMapping.class, DestinationMapping.class})
 public class TFLProxyApplication implements CommandLineRunner {
 
 	private static final Logger logger = LoggerFactory.getLogger(TFLProxyApplication.class);

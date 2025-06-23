@@ -2,7 +2,6 @@ package dev.jarradclark.tflproxy.services;
 
 import dev.jarradclark.tflproxy.config.DestinationMapping;
 import dev.jarradclark.tflproxy.config.StopMapping;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -16,16 +15,9 @@ public class TFLHelper {
     private final Map<String,String> stopMap;
     private final Map<String, String> destinationMap;
 
-    @Autowired
-    StopMapping stopMapping;
-
-    @Autowired
-    DestinationMapping destinationMapping;
-
-    @Autowired
-    private TFLHelper(StopMapping stopMap, DestinationMapping destinationMap) {
-        this.stopMap = stopMap.getStops();
-        this.destinationMap = destinationMap.getDestinations();
+    private TFLHelper(StopMapping stopMap, DestinationMapping destinationMap, StopMapping stopMapping) {
+        this.destinationMap = destinationMap.destinations();
+        this.stopMap = stopMap.stops();
     }
 
     /**

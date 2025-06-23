@@ -14,6 +14,6 @@ class StopMappingTest {
 
     @Test
     void verifyTestStopIsAvailable() {
-        assertEquals("Test Stop Name", stopMapping.getStops().get("TestStop"));
+        assertEquals("Test Stop Name", stopMapping.stops().get("TestStop"));
     }
 }

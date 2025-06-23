@@ -14,6 +14,6 @@ class DestinationMappingTest {
 
     @Test
     void verifyTestDestinationAvailable() {
-        assertEquals("Test Destination Name", destinationMap.getDestinations().get("Example for Testing"));
+        assertEquals("Test Destination Name", destinationMap.destinations().get("Example for Testing"));
     }
 }
