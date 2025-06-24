@@ -1,0 +1,52 @@
+name: Deploy Spring Boot App with Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'corretto'
+
+    - name: Grant execute permission for Gradle wrapper
+      run: chmod +x gradlew
+
+    - name: Build JAR with Gradle
+      run: ./gradlew bootJar
+
+    - name: Build Docker image
+      run: docker build -t tflproxy:latest .
+
+    - name: Save Docker image as archive
+      run: docker save tflproxy:latest -o tflproxy.tar
+
+    - name: Copy Docker image to EC2
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: tflproxy.tar
+        target: /home/ec2-user/
+
+    - name: Load and run Docker image on EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          docker load -i tflproxy.tar
+          docker stop tflproxy || true && docker rm tflproxy || true
+          docker run -d --name tflproxy -p 8080:8080 tflproxy:latest
