@@ -29,7 +29,7 @@ jobs:
       run: docker build -t tflproxy:latest .
 
     - name: Save Docker image as archive
-      run: docker save tflproxy:latest -o tflproxy.tar
+      run: docker save tflproxy:latest > tflproxy.tar
 
     - name: Copy Docker image to EC2
       uses: appleboy/scp-action@v0.1.7
