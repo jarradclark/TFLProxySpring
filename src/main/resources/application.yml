@@ -29,7 +29,7 @@ destination-mapping:
 
 colour-mapping:
   lines:
-    '267': "0xFF0000"
+    '267': "0x0000FF"
     'H37': "0xFFFF00"
     'H22': "0x00FF00"
     'TEST': "OxF0F0F0"
