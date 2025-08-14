@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Arrival {
+
     /**
      * The name of the line
      */
@@ -29,5 +30,10 @@ public class Arrival {
      * The human-readable message used for display based on the timeToStation
      */
     private String arrivalMessage;
+
+    /**
+     * The colour mapped for the selected line if available (defaults to configured color if not mapping found)
+     */
+    private String colour;
 }
 

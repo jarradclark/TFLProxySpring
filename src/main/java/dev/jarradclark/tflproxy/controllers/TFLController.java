@@ -88,7 +88,7 @@ public class TFLController {
     /**
      * Changes the current scheduled reset configuration with the supplied parameters
      * @param headers Any attached headers sent as part of the request
-     * @param resetConfiguration A valid ScheduledResetConfiguration object see {@link dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration} for details
+     * @param resetConfiguration A valid ScheduledResetConfiguration object see {@link ScheduledResetConfiguration} for details
      * @return The outcome of the change and the new scheduled reset configuration as a Json document
      */
     @PatchMapping("setScheduledResetConfiguration")
@@ -118,7 +118,11 @@ public class TFLController {
     }
 
     private boolean isUnauthorisedRequest(HttpHeaders headers) {
-        boolean isMissingOrInvalidKey = !Objects.equals(headers.getFirst("API-Key"), properties.getApiKey());
+        String header = headers.getFirst("API-Key");
+        if(header == null) { return true; }
+        if(properties.getEnv().equalsIgnoreCase("dev")) { return false; }
+
+        boolean isMissingOrInvalidKey = !Objects.equals(header, properties.getApiKey());
         if (isMissingOrInvalidKey) logger.warn("Request made with invalid API-Key. Current key ends with {}", properties.getApiKey().substring(properties.getApiKey().length() - 3));
         return isMissingOrInvalidKey;
     }

@@ -8,6 +8,7 @@ spring:
 
 main:
   defaultStop: 490009538S
+  defaultColour: "0x800000"
 
 stop-mapping:
   stops:
@@ -25,6 +26,13 @@ destination-mapping:
     '[Hounslow, Bell Corner]': "Hns, Bell Corner"
     '[Richmond, Manor Circus]': "Richmond"
     '[Example for Testing]': "Test Destination Name"
+
+colour-mapping:
+  lines:
+    '267': "0xFF0000"
+    'H37': "0xFFFF00"
+    'H22': "0x00FF00"
+    'TEST': "OxF0F0F0"
 ---
 spring:
   config:

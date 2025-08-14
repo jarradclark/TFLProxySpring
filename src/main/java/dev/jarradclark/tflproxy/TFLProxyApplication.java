@@ -1,5 +1,6 @@
 package dev.jarradclark.tflproxy;
 
+import dev.jarradclark.tflproxy.config.ColourMapping;
 import dev.jarradclark.tflproxy.config.DestinationMapping;
 import dev.jarradclark.tflproxy.config.MainProperties;
 import dev.jarradclark.tflproxy.config.StopMapping;
@@ -17,7 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @EnableScheduling
-@EnableConfigurationProperties({StopMapping.class, DestinationMapping.class})
+@EnableConfigurationProperties({StopMapping.class, DestinationMapping.class, ColourMapping.class})
 public class TFLProxyApplication implements CommandLineRunner {
 
 	private static final Logger logger = LoggerFactory.getLogger(TFLProxyApplication.class);

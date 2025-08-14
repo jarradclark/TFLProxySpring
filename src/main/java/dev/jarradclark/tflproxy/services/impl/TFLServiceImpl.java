@@ -106,7 +106,8 @@ public class TFLServiceImpl implements TFLService {
                         new Arrival( arrival.getLineName(),
                                 tflHelper.shortenDestinationName(arrival.getDestinationName()),
                                 arrival.getTimeToStation(),
-                                tflHelper.getArrivalMessageFromSeconds(arrival.getTimeToStation())))
+                                tflHelper.getArrivalMessageFromSeconds(arrival.getTimeToStation()),
+                                tflHelper.getLineColourFromLineName(arrival.getLineName())))
                 .collect(Collectors.toList());
     }
 

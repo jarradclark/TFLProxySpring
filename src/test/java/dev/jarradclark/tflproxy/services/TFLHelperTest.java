@@ -1,5 +1,6 @@
 package dev.jarradclark.tflproxy.services;
 
+import dev.jarradclark.tflproxy.config.MainProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,9 @@ class TFLHelperTest {
 
     @Autowired
     private TFLHelper tflHelper;
+
+    @Autowired
+    private MainProperties properties;
 
     @Test
     void shortenDestinationName() {
@@ -43,5 +47,16 @@ class TFLHelperTest {
 
     @Test
     void arrivalMessageShouldRoundDownToCompleteWholeMinute() { assertEquals("2m", tflHelper.getArrivalMessageFromSeconds(179)); }
+
+    @Test
+    void getDefaultLineColourWhenNoMappingExists() {
+        assertEquals(properties.getDefaultColour(), tflHelper.getLineColourFromLineName("Unknown"));
+    }
+
+    @Test
+    void getMappedStopColourWhenConfigrationExists() {
+        assertEquals("OxF0F0F0", tflHelper.getLineColourFromLineName("TEST"));
+    }
+
 
 }

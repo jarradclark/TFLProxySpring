@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class MainProperties {
     private String env;
     private String defaultStop;
+    private String defaultColour;
     private int revertToDefaultValue;
     private String revertToDefaultTimeUnit;
     private String apiKey;

@@ -11,8 +11,6 @@ class TFLClientImplTest {
 
     @Test
     void getArrivals() {
-
-
     }
 
     @Test

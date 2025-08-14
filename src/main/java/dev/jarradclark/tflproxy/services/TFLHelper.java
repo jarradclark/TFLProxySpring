@@ -1,7 +1,10 @@
 package dev.jarradclark.tflproxy.services;
 
+import dev.jarradclark.tflproxy.config.ColourMapping;
 import dev.jarradclark.tflproxy.config.DestinationMapping;
+import dev.jarradclark.tflproxy.config.MainProperties;
 import dev.jarradclark.tflproxy.config.StopMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -14,11 +17,16 @@ public class TFLHelper {
 
     private final Map<String,String> stopMap;
     private final Map<String, String> destinationMap;
+    private final Map<String, String> colourMapping;
 
-    private TFLHelper(StopMapping stopMap, DestinationMapping destinationMap, StopMapping stopMapping) {
+    private TFLHelper(StopMapping stopMap, DestinationMapping destinationMap, StopMapping stopMapping, ColourMapping colourMapping) {
         this.destinationMap = destinationMap.destinations();
         this.stopMap = stopMap.stops();
+        this.colourMapping = colourMapping.lines();
     }
+
+    @Autowired
+    private MainProperties properties;
 
     /**
      * Shorten the names of destinations based on the configured short descriptions
@@ -55,6 +63,11 @@ public class TFLHelper {
         } else {
             return String.format("%sm", Math.round((float) (seconds / 60)));
         }
+    }
+
+    public String getLineColourFromLineName(String lineName) {
+        if(colourMapping.containsKey(lineName)) { return colourMapping.get(lineName); }
+        return properties.getDefaultColour();
     }
 
 }

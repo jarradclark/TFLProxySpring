@@ -7,18 +7,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class MainPropertiesTest {
+class ColourMappingTest {
 
     @Autowired
-    MainProperties properties;
+    ColourMapping colourMapping;
 
     @Test
-    void getDefaultStop() {
-        assertEquals("490009538S", properties.getDefaultStop());
+    void testColourMappingIsAvailable() {
+        assertEquals("OxF0F0F0", colourMapping.lines().get("TEST"));
     }
 
-    @Test
-    void getDefualtColour() {
-        assertEquals("0x800000", properties.getDefaultColour());
-    }
 }

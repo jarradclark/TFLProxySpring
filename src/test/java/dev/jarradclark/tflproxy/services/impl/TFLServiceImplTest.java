@@ -15,6 +15,7 @@ import dev.jarradclark.tflproxy.services.model.ScheduledResetConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,13 +32,9 @@ import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TFLServiceImplTest {
     private static MemoryAppender appender;
-
-    Arrival first = Arrival.builder().lineName("First").destinationName("Destination1").timeToStation(50).arrivalMessage("Due").build();
-    Arrival middle = Arrival.builder().lineName("Middle").destinationName("Destination1").timeToStation(100).arrivalMessage("1m").build();
-    Arrival last = Arrival.builder().lineName("Last").destinationName("Test Destination").timeToStation(150).arrivalMessage("2m").build();
-    List<Arrival> testArrival = Arrays.asList(middle, last, first);
 
     @MockBean
     private TFLClient mockTflClient;
@@ -51,11 +48,24 @@ class TFLServiceImplTest {
     @Autowired
     private MainProperties properties;
 
+    private Arrival first;
+    private Arrival middle;
+    private Arrival last;
+    private List<Arrival> testArrival;
+
     @BeforeAll
-    static void setup() {
+    void setup() {
         appender = new MemoryAppender();
         appender.setContext((LoggerContext) LoggerFactory.getILoggerFactory());
         appender.start();
+
+        String defaultColour = properties.getDefaultColour();
+
+        first = Arrival.builder().lineName("First").colour(defaultColour).destinationName("Destination1").timeToStation(50).arrivalMessage("Due").build();
+        middle = Arrival.builder().lineName("Middle").colour(defaultColour).destinationName("Destination1").timeToStation(100).arrivalMessage("1m").build();
+        last = Arrival.builder().lineName("Last").colour(defaultColour).destinationName("Test Destination").timeToStation(150).arrivalMessage("2m").build();
+
+        testArrival = Arrays.asList(middle, last, first);
     }
 
     @AfterEach
@@ -65,6 +75,9 @@ class TFLServiceImplTest {
 
     @Test
     void getArrivalsAreSortedByArrivalTime() {
+
+        first.setColour("0x800000");
+
         when(mockTflClient.getArrivalsForStop(this.tflService.getCurrentStop())).thenReturn(testArrival);
 
         List<Arrival> arrivalList = this.tflService.getArrivals().getArrivalList();
@@ -86,7 +99,7 @@ class TFLServiceImplTest {
 
     @Test
     void getArrivalsForStop() {
-        List<Arrival> testResponse = Collections.singletonList(Arrival.builder().destinationName("New Stop").timeToStation(1).arrivalMessage("Due").build());
+        List<Arrival> testResponse = Collections.singletonList(Arrival.builder().destinationName("New Stop").timeToStation(1).arrivalMessage("Due").colour(properties.getDefaultColour()).build());
         when(this.mockTflClient.getArrivalsForStop("TestStopID")).thenReturn(testResponse);
         List<Arrival> arrivals = this.tflService.getArrivalsForStop("TestStopID").getArrivalList();
         assertEquals(testResponse, arrivals);
@@ -101,7 +114,7 @@ class TFLServiceImplTest {
 
     @Test
     void changeCurrentStop() {
-        Arrival newArrival = Arrival.builder().lineName("Test123").destinationName("Test123").timeToStation(1).arrivalMessage("Due").build();
+        Arrival newArrival = Arrival.builder().lineName("Test123").destinationName("Test123").timeToStation(1).arrivalMessage("Due").colour(properties.getDefaultColour()).build();
         when(this.mockTflClient.getArrivalsForStop("NewStopID")).thenReturn(Collections.singletonList(newArrival));
 
         this.tflService.setCurrentStop("NewStopID");
