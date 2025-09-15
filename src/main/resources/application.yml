@@ -60,5 +60,5 @@ aws:
 
 main:
   env: PROD
-  revertToDefaultValue: 10
+  revertToDefaultValue: 30
   revertToDefaultTimeUnit: MINUTES
